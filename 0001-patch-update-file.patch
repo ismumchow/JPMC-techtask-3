@@ -1,0 +1,202 @@
+From 566c67e4a0cfe1ae8c289eb4fc4fcf74df875c3c Mon Sep 17 00:00:00 2001
+From: Ismum Chowdhury <ichowdhury4@fordam.edu>
+Date: Thu, 1 Apr 2021 18:42:27 -0400
+Subject: [PATCH] patch update file
+
+---
+ package-lock.json      | 41 ++++++++++++++++++++++++++++++++++++++++
+ package.json           |  1 +
+ src/DataManipulator.ts | 43 ++++++++++++++++++++++--------------------
+ src/Graph.tsx          | 31 +++++++++++++++---------------
+ 4 files changed, 80 insertions(+), 36 deletions(-)
+
+diff --git a/package-lock.json b/package-lock.json
+index 35ea570..269614c 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -870,6 +870,42 @@
+       "resolved": "https://registry.npmjs.org/@csstools/convert-colors/-/convert-colors-1.4.0.tgz",
+       "integrity": "sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw=="
+     },
++    "@finos/perspective": {
++      "version": "0.6.2",
++      "resolved": "https://registry.npmjs.org/@finos/perspective/-/perspective-0.6.2.tgz",
++      "integrity": "sha512-Sm/+1+mBx18eIhhm4HrG/fa3Rx76L3ljjsMocFQKZ2rlBlIaQjDWloxWW3jVRFj9z0/XLy4gqiqXdnH6CDO5JA==",
++      "requires": {
++        "@babel/runtime": "^7.8.4",
++        "core-js": "^3.6.4",
++        "d3-array": "^1.2.1",
++        "detectie": "1.0.0",
++        "flatbuffers": "^1.10.2",
++        "lodash": "^4.17.4",
++        "text-encoding-utf-8": "^1.0.2",
++        "tslib": "^1.9.3",
++        "ws": "^6.1.2"
++      },
++      "dependencies": {
++        "@babel/runtime": {
++          "version": "7.13.10",
++          "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.13.10.tgz",
++          "integrity": "sha512-4QPkjJq6Ns3V/RgpEahRk+AGfL0eO6RHHtTWoNNr5mO49G6B5+X6d6THgWEAvTrznU5xYpbAlVKRYcsCgh/Akw==",
++          "requires": {
++            "regenerator-runtime": "^0.13.4"
++          }
++        },
++        "core-js": {
++          "version": "3.10.0",
++          "resolved": "https://registry.npmjs.org/core-js/-/core-js-3.10.0.tgz",
++          "integrity": "sha512-MQx/7TLgmmDVamSyfE+O+5BHvG1aUGj/gHhLn1wVtm2B5u1eVIPvh7vkfjwWKNCjrTJB8+He99IntSQ1qP+vYQ=="
++        },
++        "regenerator-runtime": {
++          "version": "0.13.7",
++          "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.7.tgz",
++          "integrity": "sha512-a54FxoJDIr27pgf7IgeQGxmqUNYrcV338lf/6gH456HZ/PhX+5BcwHXG9ajESmwe6WRO0tAzRUrRmNONWgkrew=="
++        }
++      }
++    },
+     "@jpmorganchase/perspective": {
+       "version": "0.2.12",
+       "resolved": "https://registry.npmjs.org/@jpmorganchase/perspective/-/perspective-0.2.12.tgz",
+@@ -5255,6 +5291,11 @@
+         }
+       }
+     },
++    "detectie": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/detectie/-/detectie-1.0.0.tgz",
++      "integrity": "sha1-ZrLK4iNtTSnvcRYRgJV7+J++U10="
++    },
+     "diff": {
+       "version": "3.5.0",
+       "resolved": "https://registry.npmjs.org/diff/-/diff-3.5.0.tgz",
+diff --git a/package.json b/package.json
+index d2798ba..eb88dc4 100644
+--- a/package.json
++++ b/package.json
+@@ -3,6 +3,7 @@
+   "version": "0.1.0",
+   "private": true,
+   "dependencies": {
++    "@finos/perspective": "^0.6.2",
+     "@jpmorganchase/perspective": "^0.2.12",
+     "@jpmorganchase/perspective-viewer": "^0.2.12",
+     "@jpmorganchase/perspective-viewer-highcharts": "^0.2.12",
+diff --git a/src/DataManipulator.ts b/src/DataManipulator.ts
+index 35556e5..cc5cab2 100644
+--- a/src/DataManipulator.ts
++++ b/src/DataManipulator.ts
+@@ -1,31 +1,34 @@
++
+ import { ServerRespond } from './DataStreamer';
+ 
+ export interface Row {
+-    price_abc : number,
+-    price_def :number,
+-    ratio :number,
+-    timestamp : Date,
+-    upper_bound: number,
+-    lower_bound : number,
+-    trigger_alert : number | undefined,
++  price_abc: number,
++  price_def: number,
++  ratio: number,
++  timestamp: Date,
++  upper_bound: number,
++  lower_bound: number,
++  trigger_alert: number | undefined,
+ }
+ 
+ 
+ export class DataManipulator {
+-  static generateRow(serverRespond: ServerRespond[]): Row {
+-    const priceABC = (serverRespond[0].top_ask.price + serverRespond[0].top_bid.price)/2;
+-    const priceDEF = (serverRespond[1].top_ask.price + serverRespond[1].top_bid.price)/2;
++  static generateRow(serverResponds: ServerRespond[]): Row {
++    const priceABC = (serverResponds[0].top_ask.price + serverResponds[0].top_bid.price)/2;
++    const priceDEF = (serverResponds[1].top_ask.price + serverResponds[1].top_bid.price)/2;
+     const ratio = priceABC / priceDEF;
+-    const upperBound = 1 + 0.1;
+-    const lowerBound = 1 - .1;
++    const upper_bound = 1 + 0.07;
++    const lower_bound = 1 - 0.07;
+     return {
+-      price_abc : priceABC,
+-      price_def : priceDEF,
++      price_abc: priceABC,
++      price_def: priceDEF,
+       ratio,
+-      timestamp : serverRespond[0].timestamp > serverRespond[1].timestamp ? serverRespond[0].timestamp : serverRespond[1].timestamp,
+-      upper_bound: upperBound,
+-      lower_bound : lowerBound,
+-      trigger_alert :(ratio > upperBound || ratio < lowerBound) ? ratio : undefined,
+-    };
+-   }
++      timestamp: serverResponds[0].timestamp > serverResponds[1].timestamp ?
++                  serverResponds[0].timestamp : serverResponds[1].timestamp,
++      upper_bound: upper_bound,
++      lower_bound: lower_bound,
++      trigger_alert: (ratio > upper_bound || ratio < lower_bound ) ? ratio : undefined,
++
++      };
++  }
+ }
+diff --git a/src/Graph.tsx b/src/Graph.tsx
+index aef5cad..01d7e16 100644
+--- a/src/Graph.tsx
++++ b/src/Graph.tsx
+@@ -1,5 +1,5 @@
+ import React, { Component } from 'react';
+-import { Table } from '@jpmorganchase/perspective';
++import { Table } from '@finos/perspective';
+ import { ServerRespond } from './DataStreamer';
+ import { DataManipulator } from './DataManipulator';
+ import './Graph.css';
+@@ -23,13 +23,13 @@ class Graph extends Component<IProps, {}> {
+     const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
+ 
+     const schema = {
+-       price_abc : 'float',
+-       price_def : 'float',
+-       ratio : 'float',
+-       timestamp : 'date',
+-       upper_bound: 'float',
+-       lower_bound : 'float',
+-       trigger_alert : 'float',
++      price_abc: 'float',
++      price_def: 'float',
++      ratio: 'float',
++      timestamp: 'date',
++      upper_bound: 'float',
++      lower_bound: 'float',
++      trigger_alert: 'float'
+     };
+ 
+     if (window.perspective && window.perspective.worker()) {
+@@ -39,17 +39,16 @@ class Graph extends Component<IProps, {}> {
+       // Load the `table` in the `<perspective-viewer>` DOM reference.
+       elem.load(this.table);
+       elem.setAttribute('view', 'y_line');
+-      elem.setAttribute('column-pivots', '["stock"]');
+       elem.setAttribute('row-pivots', '["timestamp"]');
+-      elem.setAttribute('columns', '["top_ask_price"]');
++      elem.setAttribute('columns', '["ratio", "lower_bound", "upper_bound", "trigger_alert"]');
+       elem.setAttribute('aggregates', JSON.stringify({
+-        price_abc : 'avg',
+-        price_def : 'avg',
+-        ratio : 'avg',
+-        timestamp : 'distinct count',
++        price_abc: 'avg',
++        price_def: 'avg',
++        ratio:'avg',
++        timestamp: 'distinct count',
+         upper_bound: 'avg',
+-        lower_bound : 'avg',
+-        trigger_alert : 'avg',
++        lower_bound: 'avg',
++        trigger_alert: 'avg',
+       }));
+     }
+   }
+-- 
+2.22.0
+
